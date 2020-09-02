@@ -13,6 +13,7 @@ N = 0.0
 
 for i in range(0, len(sys.argv)):
     if (sys.argv[i] == "-k"):
+        k = float(sys.argv[i+1])
         i += 1
     elif (sys.argv[i] == "-m"):
         m = float(sys.argv[i+1])
@@ -43,6 +44,9 @@ def f(t,y):
 t = np.zeros(N)
 x = np.zeros(N)
 v = np.zeros(N)
+KE = np.zeros(N)        ##kinetic energy
+PE = np.zeros(N)
+E_total = np.zeros(N)
 
 y = np.zeros(2)
 y[0] = x_0
@@ -53,11 +57,14 @@ for i in range(0,N):
     y = rungekutta.rk2(t[i],y,h,f)
     x[i] = y[0]
     v[i] = y[1]
+    KE[i] = 0.5*m*y[1]**2 
+    PE[i] = 0.5*k*y[0]**2
+    E_total[i] = KE[i] + PE[i]
     
     
 f = open("rk2spring.dat", "w")
 for i in range(0,N):
-    f.write(str(t[i]) + " " + str(x[i]) + " " + str(v[i]) + "\n")
+     f.write(str(t[i]) + " " + str(x[i]) + " " + str(v[i]) + " " + str(KE[i]) + " " + str(PE[i]) + " " + str(E_total[i]) + "\n")
 f.close()
 
 

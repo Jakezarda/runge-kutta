@@ -32,5 +32,5 @@ def rk45(t, y, h, f, err_tol, h_min, h_max):
         h /= 2.0
     elif (s > 1.5 and h < h_max/2.0):
         h *= 2.0
-    return h,z
+    return h,Z
         
