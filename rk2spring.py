@@ -58,8 +58,11 @@ y[0] = x_0
 err = 10**-8
 
 
+
+
 def update(existingaggregate, newvalue):
-    count, mean, M2 = existingaggregatecount += 1
+    (count, mean, M2) = existingaggregate
+    count += 1
     delta = newvalue - mean
     mean+= delta / count
     delta2 = newvalue - mean
@@ -67,11 +70,11 @@ def update(existingaggregate, newvalue):
     return count, mean, M2
 
 def finalize(existingAggregate):
-    count, mean, M@ = existingAggregate
+    count, mean, M2 = existingAggregate
     if count < 2:
         return float("nan")
     else:
-        mean, variance, samplevariance = mean, M2/count, M2/(count-1))
+        (mean, variance, samplevariance) = (mean, M2/count, M2/(count-1))
         return mean, variance, samplevariance
 
 for i in range(0,N):
@@ -82,10 +85,27 @@ for i in range(0,N):
     KE[i] = 0.5*m*y[1]**2 
     PE[i] = 0.5*k*y[0]**2
     E_total[i] = KE[i] + PE[i]
-    x_an[i] = x_0*np.sin(2*np.pi*t[i]+np.pi/2.0)      ##analytical solution for position
-    v_an[i] = x_0*2*np.pi*np.sin(2*np.pi*t[i]+np.pi/2.0)    ##analytical solution for velocity
-    ##if((x_an[i] - x[i])/x_an[i] <= err):                  ## this caused an infinite loop
-        ##print("The difference between the analytical and numerical answers is too large")
+    x_an[i] = x_0*np.cos(2*np.pi*t[i])                ## analytical solution for position
+    v_an[i] = -x_0*2*np.pi*np.sin(2*np.pi*t[i])        ## analytical solution for velocity
+   # update(E_total[i], i)
+    #finalize(E_total[i])
+    
+average = sum(E_total)/len(E_total)
+print(average)
+standarddev = np.std(E_total)
+print(standarddev)
+
+
+if (np.abs(x_an[i] - x[i])/x_an[i] >= err):                  
+    print("The difference between the analytical and numerical solutions for position is too large")
+elif (np.abs(x_an[i] - x[i])/x_an[i] < err):
+    print("This time step produces an accurate result for the position.")
+    
+if (np.abs((v_an[i] - v[i])/v_an[i]) >= err):                  
+    print("The difference between the analytical and numerical solutions for velocity is too large")
+elif (np.abs((v_an[i] - v[i])/v_an[i]) < err):
+    print("This time step produces an accurate result for the velocity.")
+    
 
     
     
@@ -100,18 +120,23 @@ f.close()
 rk2graphposition = plt.plot(t, x, 'o')
 plt.ylabel('Position')
 plt.xlabel('Time')
-plt.axis([0, 2, -6, 6])
+plt.axis([0, 10, -6, 6])
 plt.savefig('rk2graphposition.pdf')
+##rk2analytical = plt.plot(t, x_an, 'o')
+##plt.axis([0, 10, -6, 6])
+#plt.savefig('rk2positioncompare.pdf')
+plt.close()
 
-rk2analytical = plt.plot(t, x_an, 'o')
-plt.axis([0, 2, -6, 6])
-plt.savefig('rk2graphanalytical.pdf')
 
-##rk2graphvelocity = plt.plot(t, v, 'o')
-##plt.ylabel('Velocity')
-##plt.xlabel('Time')
+rk2graphvelocity = plt.plot(t, v, 'o')
+plt.ylabel('Velocity')
+plt.xlabel('Time')
+plt.axis([0, 10, -40, 40])
+plt.savefig('rk2graphvelocity.pdf')
+##rk2analyticalV = plt.plot(t, v_an,'o')
 ##plt.axis([0, 10, -40, 40])
-##plt.savefig('rk2graphvelocity.pdf')
+##plt.savefig('rk2velocitycompare.pdf')
+
 
 
 plt.show()
